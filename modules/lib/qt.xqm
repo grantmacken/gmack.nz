@@ -177,10 +177,10 @@ function qt:substitute( $model as map(*), $node as node() ) {
 };
 
 (:half
-
+ 
   for $att in $node/@*
   where map:contains( $model, $att )
-  return (
+  return (-
   attribute {$att}{$model($att)}
   ),
 

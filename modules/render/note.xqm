@@ -9,17 +9,41 @@ xquery version "3.1";
 module namespace note="http://markup.nz/#note";
 
 declare
-function note:head( $title ) {
-<head>
- <meta content="text/html; charset=utf-8" http-equiv="content-type" />
- <meta http-equiv="X-UA-Compatible" content="IE=edge" />
- <title>{$title}</title>
- <meta name="viewport" content="width=device-width, initial-scale=1" />
- <link href="/styles" rel="Stylesheet" type="text/css" />
- <link rel="authorization_endpoint" href="https://indieauth.com/auth" />
- <link rel="token_endpoint" href="https://tokens.indieauth.com/token" />
- <link rel="micropub" href="https://gmack.nz/micropub" />
-</head>
+function note:head( $title, $myPhoto, $mpEndpoint ) {
+element head {
+  element meta { attribute charset { 'utf-8' }},
+  element title { $title },
+  element meta {
+    attribute name { 'viewport' },
+    attribute content { 'width=device-width, initial-scale=1' }
+    },
+  element link {
+    attribute href { '/styles' },
+    attribute rel { 'Stylesheet' },
+    attribute type { 'text/css' }
+    },
+  element link {
+    attribute href { '/icons/compose' },
+    attribute rel { 'icon' },
+    attribute type { 'image/svg+xml' }
+    },
+  element link {
+    attribute href { $myPhoto } ,
+    attribute rel { 'apple-touch-icon' }
+    },
+  element link {
+    attribute href { 'https://indieauth.com/auth' },
+    attribute rel { 'authorization_endpoint' }
+    },
+  element link {
+    attribute href { 'https://tokens.indieauth.com/token' },
+    attribute rel { 'token_endpoint' }
+    },
+  element link {
+    attribute href { $mpEndpoint },
+    attribute rel { 'micropub' }
+    }
+  }
 };
 
 declare
@@ -34,10 +58,6 @@ function note:header( $map  as map(*) ) {
     }
   }
 };
-
-
-
-
 
 declare
 function note:content( $map  as map(*), $node as node()) {
@@ -61,11 +81,16 @@ function note:content( $map  as map(*), $node as node()) {
       }
     },
      element p {
-      attribute class { 'e-content' },
+      attribute class { 'e-content p-name' },
       $node/entry/content/value/string() 
+      },
+      'authored by',
+      element a {
+        attribute href {'/'},
+        attribute class {'p-author h-card'},
+        $map('card-name')
       }
-  }
-
+    }
 };
 
 
@@ -87,10 +112,6 @@ function note:tags( $node as node()) {
  else ()
 };
 
-
-
-
-
 declare
 function note:footer( $map  as map(*) ) {
    element footer {
@@ -103,8 +124,9 @@ function note:footer( $map  as map(*) ) {
       },
       ' is the website owned, authored and operated by ',
       element a {
-        attribute href {'.'},
+        attribute href {'/'},
         attribute title {'author'},
+        attribute class {'h-card p-name'},
         $map('card-name')
         }
     }
@@ -113,9 +135,11 @@ function note:footer( $map  as map(*) ) {
 declare
 function note:render( $map as map(*), $node as node()) {
   let $title :=  'note ' || $node/entry/uid/string()
-  return 
+  let $myPhoto := $map('card-photo')
+  let $mpEndpoint := $map('micropub-endpoint')
+  return
   element html {
-    note:head( $title ),
+    note:head( $title,$myPhoto, $mpEndpoint ),
     element body {
       note:header( $map ),
       note:content( $map, $node),

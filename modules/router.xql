@@ -40,7 +40,6 @@ import module namespace qt="http://markup.nz/#qt" at "lib/qt.xqm";
 import module namespace feed="http://markup.nz/#feed" at "render/feed.xqm";
 import module namespace note="http://markup.nz/#note" at "render/note.xqm";
 
-
 declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace pkg="http://expath.org/ns/pkg";
 declare namespace rest="http://exquery.org/ns/restxq";
@@ -68,7 +67,6 @@ declare variable $router:dPages := $router:dPath   || '/docs/pages';
 declare variable $router:dUploads := $router:dPath || '/docs/uploads';
 declare variable $router:dMentions := $router:dPath || '/docs/mentions';
 declare variable $router:dMedia := $router:dPath   || '/media';
-
 declare variable $router:docRepo  := doc($router:base ||  "/repo.xml");
 declare variable $router:docPkg   := doc($router:base ||  "/expath-pkg.xml");
 (: templates :)
@@ -83,9 +81,6 @@ declare variable $router:renderPath  := $router:rPath || '/modules/render';
 
 declare variable $router:nl := "&#10;";
 
-declare variable $router:xUaCompatible :=
- <http:header name="X-UA-Compatible" value="IE=edge"/>;
-
 declare variable $router:wmValue :=
  "&lt;https://" || $router:domain || "/webmention&gt; rel='webmention'";
 
@@ -95,7 +90,7 @@ declare variable $router:wmLink :=
 declare variable $router:myCard := map {
   "type": "card",
   "name": "Grant MacKenzie",
-  "photo": concat('https://', $router:domain, '/images/60/gmacknz' ),
+  "photo": concat('https://', $router:domain, '/images/180/me' ),
   "url": concat('https://', $router:domain ),
   "uuid": concat('https://', $router:domain ),
   "email": 'grantmacken@gmail.com',
@@ -142,7 +137,8 @@ declare variable $router:map := map {
   'repo-author': $router:repo('repo-author'),
   'repo-description': $router:repo('repo-description'),
   'repo-website': $router:repo('repo-website'),
-  'card-name': $router:myCard('name')
+  'card-name': $router:myCard('name'),
+  'card-photo': $router:myCard('photo')
 };
 
 declare variable $router:error := map {
@@ -164,22 +160,11 @@ function router:home() {
   try {
   let $dataMap := map { 'kind': 'feed', 'card': $router:myCard, 'profiles': $router:myProfiles  }
   let $map := map:new(( $router:map, $dataMap ))
-  (:
-  let $templatePath := $router:tPages || "/" ||  "home.html"
-  let $template :=
-      if (doc-available($templatePath)) then (doc($templatePath)) else (
-        fn:error(
-        $router:error('notFound'),
-       'template not available on path: ' || substring-after( $templatePath , $router:base || '/')
-        )
-       )
-  :)
   return (
       <rest:response>
         <http:response status="200" message="OK">
         {(
-        $router:wmLink,
-        $router:xUaCompatible
+        $router:wmLink
         )}
         </http:response>
       </rest:response>,

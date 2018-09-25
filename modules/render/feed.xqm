@@ -15,15 +15,14 @@ routes: ../api/router.xqm
                                 e.g.    /tags/tag       entries categorised as .. tag
   search view
 
+https://0.gravatar.com/avatar/0650d3fbdb61ed5d8709eda6b80c3e47=180
+
 @author Grant MacKenzie
 @version 0.0.1
 @see 
 :)
 module namespace feed="http://markup.nz/#feed";
 import module namespace qt="http://markup.nz/#qt" at "../lib/qt.xqm";
-
-
-
 
 declare
 function feed:getKindOfPost( $id ) {
@@ -37,16 +36,40 @@ function feed:getKindOfPost( $id ) {
 
 declare
 function feed:head( $map as map(*)) {
-<head>
- <meta content="text/html; charset=utf-8" http-equiv="content-type" />
- <meta http-equiv="X-UA-Compatible" content="IE=edge" />
- <title> { $map('kind') || ' for ' || $map('domain') }</title>
- <meta name="viewport" content="width=device-width, initial-scale=1" />
- <link href="/styles" rel="Stylesheet" type="text/css" />
- <link rel="authorization_endpoint" href="https://indieauth.com/auth" />
- <link rel="token_endpoint" href="https://tokens.indieauth.com/token" />
- <link rel="micropub" href="{ $map('micropub-endpoint') }" />
-</head>
+element head {
+  element meta { attribute charset { 'utf-8' }},
+  element title { $map('kind') || ' for ' || $map('domain') },
+  element meta {
+    attribute name { 'viewport' },
+    attribute content { 'width=device-width, initial-scale=1' }
+    },
+  element link {
+    attribute href { '/styles' },
+    attribute rel { 'Stylesheet' },
+    attribute type { 'text/css' }
+    },
+  element link {
+    attribute href { '/icons/compose' },
+    attribute rel { 'icon' },
+    attribute type { 'image/svg+xml' }
+    },
+  element link {
+    attribute href { $map('card-photo') } ,
+    attribute rel { 'apple-touch-icon' }
+    },
+  element link {
+    attribute href { 'https://indieauth.com/auth' },
+    attribute rel { 'authorization_endpoint' }
+    },
+  element link {
+    attribute href { 'https://tokens.indieauth.com/token' },
+    attribute rel { 'token_endpoint' }
+    },
+  element link {
+    attribute href { $map('micropub-endpoint') },
+    attribute rel { 'micropub' }
+    }
+  }
 };
 
 declare
@@ -63,16 +86,60 @@ element header {
 };
 
 declare
+function feed:sign-in-form( $map as map(*)) {
+element form {
+  attribute action { 'https://indielogin.com/auth' },
+  attribute method  { 'get' },
+  element label {
+    attribute for {'url'},
+    'Web Address:'
+   },
+  element input {
+    attribute id {'url'},
+    attribute type {'text'},
+    attribute name {'me'},
+    attribute placeholder {'https://gmack.nz'}
+   },
+  element p {
+    element button {
+      attribute type {'submit'},
+      'Sign In'
+    }
+  },
+  element input {
+    attribute type {'hidden'},
+    attribute name {'client_id'},
+    attribute value {'https://gmack.nz'}
+   },
+
+  element input {
+    attribute type {'hidden'},
+    attribute name {'redirect_uri'},
+    attribute value {'https://gmack.nz/_login'}
+   },
+
+  element input {
+    attribute type {'hidden'},
+    attribute name {'state'},
+    attribute value {'jwiusuerujs'}
+   }
+  }
+};
+
+
+declare
 function feed:footer( $map as map(*)) {
   element footer {
     attribute title { 'page footer' },
     attribute role  { 'contentinfo' },
     element a {
-      attribute href {'.'},
+      attribute href {'/'},
       attribute title {'home page'},
       $map('domain')
     },
-    ' is the website owned, authored and operated by ',
+    ' is the website',
+     '(v' || $map('pkg-version') || ')',
+    'owned, authored and operated by ' ,
     element a {
       attribute href {'.'},
       attribute title {'author'},
@@ -127,8 +194,8 @@ element div {
   element figure {
     qt:substitute( $map('card') ,
        <img class='u-photo'
-            width='60'
-            height='60'
+            width='180'
+            height='180'
             alt='name'
             src="photo" />),
     element figcaption {
@@ -206,6 +273,7 @@ element div {
 declare
 function feed:render( $map as map(*)) {
   element html {
+    attribute lang {'en'},
     feed:head( $map ),
     element body {
       feed:header( $map ),

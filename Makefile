@@ -8,8 +8,7 @@ GIT_REPO_OWNER_LOGIN="$(shell echo $(GIT_REPO_FULL_NAME) |cut -d/ -f1 )"
 .PHONY: stow
 stow:
 	@echo $(DOMAIN)
-	@mkdir -p ./{modules,resources,unit-tests}
-	@touch ./modules/t.xq
+	@mkdir -p ./{modules,resources,tmp,_content,unit-tests,.build,.deploy}
 	@cd ../ && mkdir -p dorex/domains/$(DOMAIN)
 	@cd ../ && stow -v -t "dorex/domains/$(DOMAIN)" $(DOMAIN)
 
