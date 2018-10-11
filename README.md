@@ -2,9 +2,11 @@
 
 WIP working files for an indieweb site 
 
+## content
+
 - structured data 
     - stored in docker eXistdb container 'data' volume
-    - extracted and www delivered by xQuery as HTML5 views
+    - extracted and www delivered by xQuery as hyperlinked HTML5 views
     - proxied behind openresty with views cached ... 
 - resource assets 
     - stored in a docker openresty container 'html' volume
@@ -17,4 +19,6 @@ WIP working files for an indieweb site
  - everything over HTTPS
  - Bearer Token authentication, indieauth based access control via lua modules (openresty)
 
-    
+
+
+
