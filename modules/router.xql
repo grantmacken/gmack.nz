@@ -39,6 +39,8 @@ import module namespace req="http://exquery.org/ns/request";
 import module namespace qt="http://markup.nz/#qt" at "lib/qt.xqm";
 import module namespace feed="http://markup.nz/#feed" at "render/feed.xqm";
 import module namespace note="http://markup.nz/#note" at "render/note.xqm";
+import module namespace tags="http://markup.nz/#tags" at "render/tags.xqm";
+import module namespace unavailable="http://markup.nz/#unavailable" at "render/unavailable.xqm";
 
 declare namespace repo="http://exist-db.org/xquery/repo";
 declare namespace pkg="http://expath.org/ns/pkg";
@@ -69,12 +71,6 @@ declare variable $router:dMentions := $router:dPath || '/docs/mentions';
 declare variable $router:dMedia := $router:dPath   || '/media';
 declare variable $router:docRepo  := doc($router:base ||  "/repo.xml");
 declare variable $router:docPkg   := doc($router:base ||  "/expath-pkg.xml");
-(: templates :)
-declare variable $router:tIncludes := $router:base ||  "/templates/includes";
-declare variable $router:tPosts := $router:base ||  "/templates/posts";
-declare variable $router:tPages := $router:base ||  "/templates/pages";
-declare variable $router:tTags  := $router:base ||  "/templates/tags";
-
 
 declare variable $router:rPath  := "http://ex:8080/exist/rest/db/apps/" || $router:domain;
 declare variable $router:renderPath  := $router:rPath || '/modules/render';
@@ -131,7 +127,6 @@ declare variable $router:map := map {
   'profiles': $router:myProfiles,
   'micropub-endpoint': concat('https://',$router:domain,'/micropub') ,
   'domain': $router:domain,
-  'includes': $router:tIncludes,
   'pkg-title':  $router:pkg('pkg-title'),
   'pkg-version': $router:pkg('pkg-version'),
   'repo-author': $router:repo('repo-author'),
@@ -186,14 +181,6 @@ function router:home() {
     )}
 };
 
-(:
-posts templates
----------------
-html template based on 'kind of post'
-- postType:  entry/@kind/string()
-gf: templates/posts/note.html
-:)
-
 declare
     %rest:GET
     %rest:path("/gmack.nz/posts/{$id}")
@@ -202,6 +189,7 @@ declare
 function router:posts($id as xs:string) {
   try {
   let $uid := substring-before($id,'.')
+  let $log :=  util:log('INFO', ' test log')
   let $kindOfPost :=
    switch( substring( $id,1,1) )
       case 'n' return 'note'
@@ -214,7 +202,6 @@ function router:posts($id as xs:string) {
       if (doc-available($docsPath)) then (doc($docsPath)) else (
         fn:error($router:error('notFound'), $docsPath || ' :  data doc not available on path' )
        )
-
   let $dataMap := map {
     'kind' := $kindOfPost
     }
@@ -236,19 +223,13 @@ function router:posts($id as xs:string) {
         <rest:response>
         <http:response status="404"/>
         </rest:response>,
-        ()(:        templates:apply(
-        doc($router:tPages || '/not-found.html'),
-        $router:lookup,
-        map:new(( $router:map, map {
+         unavailable:render( map:new(( $router:map, map {
             'id' := substring-before($id, '.html'),
             'module' := $err:module,
             'code' := $err:code,
             'line-number' := $err:line-number,
             'description' := $err:description
-            } )),
-        $router:config
-        )
-        :)
+            } )))
         )
     else
     (
@@ -258,6 +239,57 @@ function router:posts($id as xs:string) {
      <div>
      <h1> TODO! </h1>
      <p>{$id}</p>
+     <p>error code - {$err:code}</p>
+     <p>error description - {$err:description}</p>
+     <p>error line number- {$err:line-number}</p>
+     <p>error module - {$err:module}</p>
+     </div>
+    )
+  }
+ };
+
+
+declare
+    %rest:GET
+    %rest:path("/gmack.nz/tags/{$tag}")
+    %output:media-type("text/html")
+    %output:method("html5")
+function router:tags($tag as xs:string) {
+  try {
+ let $dataMap := map {
+    'tag' := substring-before($tag,'.')
+    }
+  let $map := map:new(( $router:map, $dataMap ))
+  return (
+      <rest:response>
+        <http:response status="200" message="OK">
+        {$router:wmLink}
+        </http:response>
+      </rest:response>,
+         tags:render( $map )
+         )
+    }
+  catch * {
+    if ( xs:string($err:code) eq 'router:documentNotAvailable' ) then (
+        <rest:response>
+        <http:response status="404"/>
+        </rest:response>,
+         unavailable:render( map:new(( $router:map, map {
+            'id' := substring-before($tag, '.html'),
+            'module' := $err:module,
+            'code' := $err:code,
+            'line-number' := $err:line-number,
+            'description' := $err:description
+            } )))
+        )
+    else
+    (
+     <rest:response>
+     <http:response status="404"/>
+     </rest:response>,
+     <div>
+     <h1> TODO! </h1>
+     <p>{$tag}</p>
      <p>error code - {$err:code}</p>
      <p>error description - {$err:description}</p>
      <p>error line number- {$err:line-number}</p>
