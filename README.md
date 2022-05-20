@@ -130,7 +130,7 @@ You don't have to do this, but it makes life a bit easier
 
 ### Switching Domains
 
-To switch development to a domain you control, change the DEV_DOMAIN to your domain then run
+To switch development to a domain you control, change the DNS_DOMAIN to your domain then run
  the `make init` target.The target will create some some boilerplate src files for your domain.
 Below we will use 'markup.nz' as an example domain.
 

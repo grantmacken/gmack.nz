@@ -14,59 +14,83 @@ iconsBuild := $(patsubst src/%,_build/%,$(wildcard src/assets/icons/*.svg))
 imagesBuild := $(patsubst src/%,_build/%,$(wildcard src/assets/images/*.png))
 
 .PHONY: assets assets-deploy
-assets: assets-deploy
-assets-deploy: _deploy/static-assets.tar 
+assets: _deploy/static-assets.tar 
 
 _deploy/static-assets.tar: $(stylesBuild) $(scriptsBuild) $(castsBuild) $(fontsBuild) 
 	[ -d $(dir $@) ] || mkdir -p $(dir $@)
 	# echo '##[  $(notdir $@) ]##' TODO $(iconsBuild) $(imagesBuild) 
-	podman volume export static-asset > $@
+	podman volume export static-assets > $@
 
-PHONY: assets-clean
+assets-deploy:
+	@echo '## $@ ##'
+	cat _deploy/static-assets.tar |
+	$(Gcmd) ' cat - | tee | sudo podman volume import static-assets - '
+	$(Gcmd) 'sudo podman exec xq ls ./priv/static/assets/fonts'
+
+# clean out asset files in the static-assets volume
+.PHONY: assets-volume-reset
+assets-volume-reset: service-stop \ 
+	volumes-remove-static-assets \
+	volumes assets-clean \
+	assets \
+	service-start
+	echo '##[ $@ ]##'
+	# systemctl --user stop  pod-podx.service || true
+	# podman volume remove static-assets --force || true
+	# podman volume create static-assets
+	# $(MAKE) assets-clean
+	# $(MAKE) assets
+	# systemctl --user start pod-podx.service || true
+
+.PHONY: assets-clean
 assets-clean:
 	echo '##[ $@ ]##'
 	rm -f $(stylesBuild) $(scriptsBuild) $(castsBuild) $(fontsBuild) $(iconsBuild) $(imagesBuild) || true 
 
-PHONY: styles 
+#############
+## STYLES ##
+#############
+
+.PHONY: styles 
 styles: $(stylesBuild)
 
-PHONY: styles-clean
+.PHONY: styles-clean
 styles-clean:
 	rm -v $(stylesBuild) || true
 	podman run --rm --mount $(MountAssets) --entrypoint 'sh' $(XQ)  \
 		-c 'rm priv/static/assets/styles/*' || true
 
-PHONY: styles-list
+.PHONY: styles-list
 styles-list:
 	podman run --rm --interactive --mount $(MountAssets) --entrypoint "sh" $(XQ) \
 		-c 'ls priv/static/assets/styles'
 
-_build/assets/%.css: src/assets/%.css
+_build/assets/styles/%: src/assets/styles/%
 	[ -d $(dir $@) ] || mkdir -p $(dir $@)
-	# echo '##[  $(patsubst src/%,%,$<) ]##'
-	podman run --rm --mount $(MountAssets) --entrypoint "sh" $(XQ) -c 'mkdir -p $(patsubst src/%,priv/static/%,$(dir $<))'
-	cat $< | 
+	echo '##[ $(patsubst src/%,priv/static/%,$<) ]##'
+	cat $< |
 	podman run --rm --interactive --mount $(MountAssets) --entrypoint "sh" $(XQ) \
-		-c 'cat - > $(patsubst src/%,priv/static/%,$<) && ls $(patsubst src/%,priv/static/%,$<)' | \
-		tee $@
-	if [ -e tiny-lr.pid ]; then
-	curl -s --ipv4  http://localhost:35729/changed?files=assets/$*.css
-	fi
+		-c 'cat - > /home/$(notdir $<) \
+		&& mkdir -v -p $(patsubst src/%,priv/static/%,$(dir $<)) \
+		&& mv /home/$(notdir $<) $(patsubst src/%,priv/static/%,$(dir $<))  \
+		&& ls $(patsubst src/%,priv/static/%,$<)' > $@
+	sleep .5
 
-###############
-## SCRIPTS
-###############
 
-PHONY: scripts
+#############
+## SCRIPTS ##
+#############
+
+.PHONY: scripts
 scripts: $(scriptsBuild)
 
-PHONY: scripts-clean
+.PHONY: scripts-clean
 scripts-clean:
 	rm -v $(scriptsBuild) || true
 	podman run --rm --mount $(MountAssets) --entrypoint 'sh' $(XQ)  \
 		-c 'rm priv/static/assets/scripts/*' || true
 
-PHONY: scripts-list
+.PHONY: scripts-list
 scripts-list:
 	podman run --rm --interactive \
 		--mount $(MountAssets) --entrypoint "sh" $(XQ) \
@@ -80,20 +104,20 @@ _build/assets/scripts/%: src/assets/scripts/%
 		-c 'cat - > $(patsubst src/%,priv/static/%,$<) && ls $(patsubst src/%,priv/static/%,$<)' | \
 		tee $@
 
-PHONY: casts 
+.PHONY: casts 
 casts: $(castsBuild)
 
-PHONY: fonts
-fonts: $(fontsBuild)
 
-PHONY: casts-list
+
+
+
+.PHONY: casts-list
 casts-list:
 	podman run --rm --interactive --mount $(MountAssets) --entrypoint "sh" $(XQ) \
 		-c 'ls priv/static/assets/casts'
 
-PHONY: fonts-list
+.PHONY: fonts-list
 fonts-list:
-
 	podman run --rm --interactive --mount $(MountAssets) --entrypoint "sh" $(XQ) \
 		-c 'ls priv/static/assets/fonts'
 
@@ -105,8 +129,26 @@ _build/assets/casts/%: src/assets/casts/%
 		-c 'cat - > $(patsubst src/%,priv/static/%,$<) && ls $(patsubst src/%,priv/static/%,$<)' | \
 		tee $@
 
+.PHONY: fonts
+fonts: $(fontsBuild)
+
+.PHONY: fonts-clean
+fonts-clean:
+	rm -v $(fontsBuild) || true
+	podman run --rm --mount $(MountAssets) --entrypoint 'sh' $(XQ)  \
+		-c 'rm priv/static/assets/fonts/*' || true
+
 _build/assets/fonts/%: src/assets/fonts/%
-	@echo "##[ $< ]##"
+	echo "##[ $(patsubst src/%,priv/static/%,$<) ]##"
+	cat $< |
+	podman run --rm --interactive --mount $(MountAssets) --entrypoint "sh" $(XQ) \
+		-c 'cat - > /home/$(notdir $<) \
+		&& mkdir -v -p $(patsubst src/%,priv/static/%,$(dir $<)) \
+		&& mv /home/$(notdir $<) $(patsubst src/%,priv/static/%,$(dir $<))  \
+		&& ls $(patsubst src/%,priv/static/%,$<)' > $@
+	sleep .5
+
+xxxx:
 	[ -d $(dir $@) ] || mkdir -p $(dir $@)
 	podman run --rm --mount $(MountAssets) --entrypoint "sh" $(XQ) -c 'mkdir -p  $(patsubst src/%,priv/static/%,$(dir $<))'
 	cat $< | podman run --rm --interactive --mount $(MountAssets) --entrypoint "sh" $(XQ) \

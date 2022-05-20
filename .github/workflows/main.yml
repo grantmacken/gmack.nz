@@ -2,9 +2,9 @@
 name: CI
 on:
   push:
-    branches: 'main'
+    branches: 'xmain'
   pull_request:
-    branches: 'main'
+    branches: 'xmain'
 jobs:
   build:
     runs-on: ubuntu-latest
