@@ -9,9 +9,12 @@ BuildConfs := _build/proxy/conf/mime.types $(patsubst src/%.conf,_build/%.conf,$
 SiteConfs := $(patsubst src/%.conf,/opt/%.conf,$(ConfList))
 
 .PHONY: confs 
-confs: confs-deploy
-# confs-check: $(CheckConfs)
-confs-deploy: _deploy/proxy-conf.tar #  after confs-check
+confs: _deploy/proxy-conf.tar ## proxy-conf: check and store src files in container 'or' filesystem
+
+confs-deploy: #  
+	@echo '## $@ ##'
+	cat _deploy/static-assets.tar |
+	$(Gcmd) ' cat - | podman volume import proxy-conf - '
 
 .PHONY: confs-clean
 confs-clean:

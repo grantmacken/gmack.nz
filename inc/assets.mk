@@ -14,33 +14,26 @@ iconsBuild := $(patsubst src/%,_build/%,$(wildcard src/assets/icons/*.svg))
 imagesBuild := $(patsubst src/%,_build/%,$(wildcard src/assets/images/*.png))
 
 .PHONY: assets assets-deploy
-assets: _deploy/static-assets.tar 
+assets: _deploy/static-assets.tar ## static-assets: pre-process and store on container filesystem
 
 _deploy/static-assets.tar: $(stylesBuild) $(scriptsBuild) $(castsBuild) $(fontsBuild) 
 	[ -d $(dir $@) ] || mkdir -p $(dir $@)
 	# echo '##[  $(notdir $@) ]##' TODO $(iconsBuild) $(imagesBuild) 
 	podman volume export static-assets > $@
 
-assets-deploy:
+assets-deploy: ## static-assets: deploy assets on remote container filesystem
 	@echo '## $@ ##'
 	cat _deploy/static-assets.tar |
-	$(Gcmd) ' cat - | tee | sudo podman volume import static-assets - '
-	$(Gcmd) 'sudo podman exec xq ls ./priv/static/assets/fonts'
+	$(Gcmd) ' cat - | podman volume import static-assets - '
 
-# clean out asset files in the static-assets volume
 .PHONY: assets-volume-reset
-assets-volume-reset: service-stop \ 
+assets-volume-reset: service-stop \ ## static-assets: reset static-assets volume then rebuild asset files 
 	volumes-remove-static-assets \
-	volumes assets-clean \
+	volumes \
+	assets-clean \
 	assets \
 	service-start
 	echo '##[ $@ ]##'
-	# systemctl --user stop  pod-podx.service || true
-	# podman volume remove static-assets --force || true
-	# podman volume create static-assets
-	# $(MAKE) assets-clean
-	# $(MAKE) assets
-	# systemctl --user start pod-podx.service || true
 
 .PHONY: assets-clean
 assets-clean:
