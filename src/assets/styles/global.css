@@ -1,0 +1,114 @@
+/* https://piccalil.li/cube-css */
+
+/* custom properties */
+
+:root {
+    --dark1: hsla(220, 16%, 22%, 1); /* #2E3440 */
+    --dark2: hsla(222, 16%, 28%, 1); /* #3b4252 */
+    --dark3: hsla(220, 17%, 32%, 1); /* #434c5e */
+    --dark4: hsla(220, 16%, 36%, 1); /* #4c566a */
+    --dark5: hsla(221, 16%, 46%, 1); /* #636f88 */
+   --light1: hsla(219, 28%, 88%, 1); /* #d8dee9 */
+   --light2: hsla(218, 27%, 92%, 1); /* #E5E9F0 */
+   --light3: hsla(218, 27%, 94%, 1); /* #ECEFF4 */
+   --light4: hsla(60, 30%, 96%, 1);  /* #F8F8F2 */
+    --blue1: hsla(179, 25%, 65%, 1); /* #8FBCBB */
+    --blue2: hsla(193, 43%, 67%, 1); /* #88C0D0 */
+    --blue3: hsla(210, 34%, 63%, 1); /* #81A1C1 */
+    --blue4: hsla(213, 32%, 52%, 1); /* #5e81ac */
+      --red: hsla(354, 42%, 56%, 1); /* #bf616a */
+   --orange: hsla(14, 51%, 63%, 1);  /* #d08770 */
+   --yellow: hsla(40, 71%, 73%, 1);  /* #EBCB8B */
+    --green: hsla(92, 28%, 65%, 1);  /* #A3BE8C */
+   --purple: hsla(311, 20%, 63%, 1); /* #b48ead */
+
+  --size-300: clamp(0.7rem, 0.66rem + 0.2vw, 0.8rem);
+  --size-400: clamp(0.88rem, 0.83rem + 0.24vw, 1rem);
+  --size-500: clamp(1.09rem, 1rem + 0.47vw, 1.33rem);
+  --size-600: clamp(1.37rem, 1.21rem + 0.8vw, 1.78rem);
+  --size-700: clamp(1.71rem, 1.45rem + 1.29vw, 2.37rem);
+  --size-800: clamp(2.14rem, 1.74rem + 1.99vw, 3.16rem);
+  --size-900: clamp(2.67rem, 2.07rem + 3vw, 4.21rem);
+  --size-1000: clamp(3.34rem, 2.45rem + 4.43vw, 5.61rem);
+
+  --base-font-family: 'IBM Plex Serif', 'Georgia', Times, serif;
+  --base-font-family-monospace: Menlo, Monaco, Consolas, 'Courier New', monospace;
+  --base-font-size: --size-400;
+  --base-font-weight: 400;
+  --base-color: var(--dark1);
+  --base-background: var(--light3);
+  --base-line-height: 1.5;
+  --flow-spacer: 1rem;
+
+
+  /* BANNER */
+  --banner-color:  var(--light1);
+  --banner-background: var(--dark5);
+
+  /* HEADINGS */
+  --heading-font-family: 'IBM Plex Sans', 'Helvetica Neue', Arial, sans-serif;
+  --heading-color: var(--dark3 );
+  --heading-line-height: 1.3;
+  --heading-font-weight: 900;
+  --heading-margin: 0 0 1rem;
+
+
+  /* LISTS */
+  --list-font: 'IBM Plex Sans Condensed', 'Helvetica Neue', Arial, sans-serif;
+  --list-unordered-style: disk;
+  --list-level-one-style: upper-roman;
+  --list-level-two-style: lower-roman;
+  --list-level-three-style: lower-alpha;
+  --list-definition-term-weight: 600;
+
+  --block-element-margin-bottom: 1rem;
+  --border-radius: 0.2rem;
+
+
+  /* NAVIGATION */
+  --nav-background: var(--light2);
+  /* NAVIGATION HYPERLINKS */
+  --link-color: var(--blue4);
+  --link-highlight: var(--blue1);
+
+  /* CODE BLOCK HIGHLIGHTING */
+  --code-font: 'IBM Plex Mono', 'Menlo', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', Courier, monospace;
+  --code-background: var(--dark1);
+  --code-text-color: var(--light4);
+  --code-inline-background: var(--light2);
+  --code-inline-color: var(--dark1);
+  --code-font-size: var(--size-400);
+  --code-padding-vertical: 0.2rem; 
+  --code-padding-horizontal: 0.4rem;
+  --code-border-color: --dark6;
+
+  /* CODE TOKENS AS DEFINED BY PRISM */
+  --code-boolean: var(--blue3);
+  --code-comment: var(--dark5);
+  --code-function: var(--blue2);
+  --code-keyword: var(--blue3);
+  --code-number: var(--purple);
+  --code-operator: var(--blue3);
+  --code-punctuation: var(--blue3);
+  --code-regex: var(--yellow);
+  --code-string: var(--green);
+  --code-symbol: var(--blue3);
+
+
+  --pre-padding-vertical:  1.25rem;
+  --pre-padding-horizontal: 1.5rem;
+  --pre-border-color: var(--dark5);
+  --pre-background-color: transparent;
+  --pre-text-color: var(--light4);
+
+  --kbd-padding-vertical:  0.2rem;
+  --kbd-padding-horizontal: 0.4rem);
+  --kbd-border-color: var(--dark5) ;
+  --kbd-background-color: transparent;
+  --kbd-text-color: var(--light4);
+
+}
+
+
+
+

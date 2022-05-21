@@ -1,0 +1,474 @@
+
+/* * + * { */
+/* 	margin-top: var(--flow-spacer); */
+/* } */
+
+body {
+  font-family: var(--base-font-family);
+  font-weight:  var( --base-font-weight);
+  line-height: var(--base-line-height);
+  letter-spacing: 0;
+  text-align: left;
+  color: var(--base-color);
+  background-color: var(--base-background);
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  flex-direction: column;
+  flex-wrap: nowrap;
+}
+
+header[role=banner] {
+  color: var(--banner-color);
+  background-color: var(--banner-background);
+  letter-spacing: 0.125em;
+  /* padding-top: .25em; */
+  /* padding-bottom: .25em; */
+  /* flex child item */
+  min-height: 10vh;
+  /* flex-grow: 1; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+/* there is only one main */
+main {
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  --modifier: calc(60rem - 100%);
+}
+
+/**
+ * for each item in main
+ * display hozizontally if more than 60 rem
+**/
+main > * {
+  max-width: 100%;
+  flex-grow: 1;
+  flex-basis: calc(var(--modifier) * 999);
+}
+
+article {
+  /* background-color: var(--light1); */
+  margin-inline: auto;
+  padding-inline: 1rem;
+  max-width: 60ch;
+}
+
+article > * + * {
+	margin-top: var(--flow-spacer);
+}
+
+article h2 + p {
+  margin-top: .5rem;
+} 
+
+
+footer {
+  margin-top: 0;
+  font-size:  var(--size-500);
+  /* display: block; */
+}
+
+/* HEADINGS */
+
+h1,
+h2,
+h3,
+h4 {
+ font-family: var(--heading-font-family);
+ font-weight: var(--heading-weight);
+ line-height: var(--heading-line-height);
+}
+
+h1,
+h2,
+{
+ font-weight: var(--heading-font-weight);
+ color: var(--heading-color);
+}
+
+/* h1, */
+/* h2, */
+/* { */
+/* max-width: 25ch; */
+/* } */
+
+
+h1 {
+  max-width: 15ch;
+  font-size: var(--size-800);
+}
+
+h2 {
+  font-size: var(--size-700);
+}
+
+h3 {
+  font-size: var(--size-600);
+}
+
+p {
+  font-size: var(--size-500);
+}
+
+
+p + p {
+text-indent: var(--size-300);
+}
+
+small, sub, sup {
+  font-size: var(--size-400); 
+}
+
+
+address {
+  font-style: normal;
+  line-height: inherit;
+}
+
+/* NAVIGATION HYPERLINKS */
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-highlight);
+  text-decoration: underline;
+  background-color: var(--dark4);
+}
+
+
+/* lists */
+
+ul,
+ol,
+dl {
+font-family: var(--list-font);
+}
+
+ul {
+  list-style-type: var(--list-unordered);
+}
+
+/* remove top margin from nested lists */
+ul ul {
+  margin-top: 0;
+}
+
+
+ol {
+  list-style-type: var(--list-level-one);
+}
+
+ol ol,
+ul ol {
+  margin-top: 0;
+  list-style-type: var(--list-level-two);
+}
+
+ol ol ol,
+ol ul ol,
+ul ol ol,
+ul ul ol {
+ margin-top: 0;
+ list-style-type: var(--list-level-three);
+}
+
+/* NAVIGATION LISTS */
+
+nav ul {
+ list-style: none;
+ padding-left: .25em;
+ font-size: ;
+}
+
+nav ul li {
+  margin-top: 0;
+}
+
+/* NAVIGATION LIST BLOCK COMPONENTS */
+/* TODO use aria attr instead of these classes */ 
+
+
+.nl {
+  background-color: var(--nav-background);
+}
+
+/* A ROW FLEX ITEM in menu bar */
+.nl_search {
+  visibility: hidden;
+}
+
+/* A ROW FLEX ITEM in menu bar */
+.nl_menu {
+  visibility: hidden;
+}
+
+/* A ROW FLEX ITEM in menu bar */
+.nl_breadcrumb {
+  /* move off right screen edge */
+  padding-right: 1rem;
+  /* flex child props */ 
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-content: center;
+  align-items: baseline;
+}
+
+.nl_breadcrumb li::before {
+    content: "→ ";
+    color: var(--blue2);
+    margin-left: .25em;
+}
+
+.nl_breadcrumb li:first-child::before {
+    content: " ";
+}
+
+.nl_complementary {
+  padding-left: 20px;
+  padding-right: 20px;
+  flex-direction: column;
+  align-content: stretch;
+}
+
+/* flex items */
+.nl_complementary li {
+    order: 0;
+    flex: 0 1 auto;
+    align-self: stretch;
+}
+
+.nl_complementary a {
+  display: block;
+  width: 100%;
+  padding-left: .5em;
+  border-left: solid 10px transparent;
+  border-right: solid 2px var(--blue1);
+  border-bottom: solid 1px var(--blue1);
+  text-decoration: none;
+}
+
+.nl_complementary a:hover {
+  border-left: solid 10px var(--link-highlight);
+  border-right: solid 2px var(--orange);
+  border-bottom: solid 1px var(--orange);
+}
+
+
+/* DEFINITION LISTS */
+
+/* dl { */
+/*   padding: 0; */
+/* } */
+
+dt {
+  font-weight: var(--list-definition-term-weight);
+}
+
+/* dd:not(:last-child) { */
+/*     margin-bottom: var(--block-element-margin-bottom); */
+/* } */
+
+/* quotes */
+
+blockquote {
+  padding-left: var(--size-600);
+  border-left: 5px solid;
+  font-style: italic;
+}
+
+::selection {
+  color: #fff;
+  background: rgba(0, 0, 0, 0.99);
+}
+
+/* citations */
+
+cite {
+  font-style: normal;
+}
+
+
+/* IMAGES AND FIGURES */
+
+img {
+  max-width: min(55rem, 100%);
+}
+
+figcaption {
+  font-size: var(--size-300);
+  font-style: italic;
+  margin-top: 1rem;
+}
+
+/* CODE */
+
+kbd {
+  padding: var(--kbd-padding-vertical) var(--kbd-padding-horizontal);
+  border: 1px solid var(--kbd-border-color);
+  border-radius: var(--border-radius, 0.2rem);
+  background-color: var(--kbd-background-color);
+  color: var(--kbd-text-color);
+}
+
+pre, code {
+  display: block;
+  font-family: var( --code-font);
+  color: var(--code-inline-color);
+  background: var(--code-inline-background);
+  font-size: var(--code-font-size);
+}
+
+code {
+  padding: var(--code-padding-vertical) var(--code-padding-horizontal);
+  border-radius: var(--border-radius);
+  background-color: var(--code-background);
+  white-space: pre;
+  color: var(--code-text-color);
+}
+
+*:not(pre) > code {
+  border: 1px solid var(--code-border-color);
+}
+
+
+/* TODO use treesitter instead of prism */
+
+/* Ported for PrismJS 
+* by Zane Hitchcoxc (@zwhitchcox) and 
+* Gabriel Ramos (@gabrieluizramos)
+*/
+
+/* code[class*="language-"], */
+/* pre[class*="language-"] { */
+/* 	color: var(--code-color); */
+/* 	background: none; */
+/* 	text-align: left; */
+/* 	white-space: pre; */
+/* 	word-spacing: normal; */
+/* 	word-break: normal; */
+/* 	word-wrap: normal; */
+/* 	line-height: 1.5; */
+/* 	-moz-tab-size: 4; */
+/* 	-o-tab-size: 4; */
+/* 	tab-size: 4; */
+/* 	-webkit-hyphens: none; */
+/* 	-moz-hyphens: none; */
+/* 	-ms-hyphens: none; */
+/* 	hyphens: none; */
+/* } */
+/**/
+/* /* Code blocks */ */
+/* pre[class*="language-"] { */
+/* 	padding: 1em; */
+/* 	/* margin: .5em 0; */ */
+/* 	overflow: auto; */
+/* 	border-radius: 0.3em; */
+/* } */
+/**/
+/* :not(pre) > code[class*="language-"], */
+/* pre[class*="language-"] { */
+/* 	background: var(--code-background); */
+/* } */
+/**/
+/* /* Inline code */ */
+/* :not(pre) > code[class*="language-"] { */
+/* 	/* padding: .1em; */ */
+/* 	border-radius: .3em; */
+/* 	white-space: normal; */
+/* } */
+/**/
+
+/* TODO 
+* https://prismjs.com/tokens.html
+* */
+
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: var(--code-comment);
+}
+
+.token.punctuation {
+	color: var(--code-punctuation);
+}
+
+.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: var(--code-symbol);
+}
+
+.token.number {
+	color: var(--code-number);
+}
+
+.token.boolean {
+	color: var(--code-boolean);
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: var(--code-string);
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string,
+.token.variable {
+	color: var(--code-function);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.function,
+.token.class-name {
+ color:  var(--code-function);
+}
+
+.token.keyword {
+	color: var(--code-keyword);
+}
+
+.token.regex,
+.token.important {
+	color: var(--code-regex);
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
